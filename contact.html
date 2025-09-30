@@ -7,53 +7,43 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="navbar">
-    <div class="logo">Mike's Grill</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="menu.html">Menu</a>
-      <a href="contact.html" class="active">Contact</a>
+  <header class="header">
+    <div class="logo"><h1>Mike's Grill</h1></div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="menu.html" class="nav-link">Menu</a>
+      <a href="contact.html" class="nav-link">Contact</a>
     </nav>
   </header>
 
-  <section class="content contact">
-    <div class="contact-info">
-      <div class="card">
-        <h3>Location</h3>
-        <p>123 Main Street<br>Downtown District<br>Springfield, ST 12345</p>
+  <main>
+    <section class="contact-section">
+      <div class="container">
+        <h2 class="section-title">Contact Us</h2>
+        <div class="contact-info">
+          <p>📍 123 Main Street, Tilton, NH</p>
+          <p>📞 <a href="tel:5551234567">(555) 123-4567</a></p>
+          <p>📧 <a href="mailto:info@mikesgrill.com">info@mikesgrill.com</a></p>
+        </div>
       </div>
-      <div class="card">
-        <h3>Phone</h3>
-        <p>(555) 123-4567<br><small>Call for reservations or takeout orders</small></p>
-      </div>
-      <div class="card">
-        <h3>Email</h3>
-        <p>info@mikesgrill.com<br><small>We’ll respond within 24 hours</small></p>
-      </div>
-      <div class="card">
-        <h3>Hours</h3>
-        <p>Mon–Thu: 11 AM – 10 PM<br>
-           Fri–Sat: 11 AM – 11 PM<br>
-           Sun: 12 PM – 9 PM<br>
-           Carhop: May–Sep 11 AM – 8 PM</p>
-      </div>
-    </div>
+    </section>
 
-    <div class="contact-form">
-      <h3>Send us a message</h3>
-      <form>
-        <input type="text" placeholder="First Name">
-        <input type="text" placeholder="Last Name">
-        <input type="email" placeholder="Email">
-        <input type="tel" placeholder="Phone (optional)">
-        <textarea placeholder="Your message..."></textarea>
-        <button type="submit">Send Message</button>
-      </form>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <p>© 2025 Mike's Grill. All rights reserved.</p>
-  </footer>
+    <section id="hours" class="hours-section">
+      <div class="container">
+        <h3 class="section-title">Hours of Operation</h3>
+        <div class="hours-grid">
+          <div class="hours-col">
+            <h4>Mon - Thu:</h4><p>11:00 AM - 10:00 PM</p>
+          </div>
+          <div class="hours-col">
+            <h4>Fri - Sat:</h4><p>11:00 AM - 11:00 PM</p>
+          </div>
+          <div class="hours-col">
+            <h4>Sunday:</h4><p>12:00 PM - 9:00 PM</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

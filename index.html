@@ -7,64 +7,62 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">Mike's Grill</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="menu.html">Menu</a>
-      <a href="contact.html">Contact</a>
+  <header class="header">
+    <div class="logo"><h1>Mike's Grill</h1></div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="menu.html" class="nav-link">Menu</a>
+      <a href="contact.html" class="nav-link">Contact</a>
     </nav>
   </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1>Welcome to <span>Mike's Grill</span></h1>
-    <p>Classic American diner since 1958</p>
-   <!-- Add image here -->
-	
-  </section>
+  <main>
+    <section class="hero-section">
+      <div class="hero-content">
+        <h2>Welcome to Mike's Grill</h2>
+        <p>Classic American diner since 1958</p>
+      </div>
+    </section>
 
-  <!-- About / Story -->
-  <section class="content">
-    <div class="story">
-      <h2>Our Story</h2>
-      <p>
-        Since Mike first opened our doors in 1958, <strong>Mike's Grill</strong> has been a cornerstone 
-        of the community, serving classic American diner fare with old-fashioned hospitality. 
-        Our kitchen specializes in flame-grilled burgers, hand-cut fries, and traditional comfort 
-        food recipes passed down through the decades.
-      </p>
-      <p>
-        Complete with carhop service during summer months and that authentic 1950s diner atmosphere, 
-        we’re the place where families have been gathering for generations.
-      </p>
-    </div>
-    <div class="highlights">
-      <div class="card">
-        <h3>Classic Recipes</h3>
-        <p>Time-tested recipes from 1958, made fresh daily with quality ingredients and traditional cooking methods.</p>
+    <section id="about" class="content-section">
+      <div class="container">
+        <div class="about-story">
+          <h3 class="section-title">Our Story</h3>
+          <p>Since opening in 1958, Mike's Grill has been serving classic American diner fare with old-fashioned hospitality. From flame-grilled burgers to milkshakes, every meal is made with care and tradition.</p>
+        </div>
+        <div class="about-features">
+          <div class="feature-card">
+            <h4 class="card-title">Classic Recipes</h4>
+            <p>Time-tested recipes, made fresh daily with quality ingredients.</p>
+          </div>
+          <div class="feature-card">
+            <h4 class="card-title">Carhop Service</h4>
+            <p>Experience authentic 1950s dining with our seasonal carhop service.</p>
+          </div>
+          <div class="feature-card">
+            <h4 class="card-title">Family Tradition</h4>
+            <p>Generations of families have gathered here for over 65 years.</p>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <h3>Carhop Service</h3>
-        <p>Experience authentic 1950s dining with our seasonal carhop service – just like the good old days.</p>
+    </section>
+    
+    <section id="hours" class="hours-section">
+      <div class="container">
+        <h3 class="section-title">Hours of Operation</h3>
+        <div class="hours-grid">
+          <div class="hours-col">
+            <h4>Mon - Thu:</h4><p>11:00 AM - 10:00 PM</p>
+          </div>
+          <div class="hours-col">
+            <h4>Fri - Sat:</h4><p>11:00 AM - 11:00 PM</p>
+          </div>
+          <div class="hours-col">
+            <h4>Sunday:</h4><p>12:00 PM - 9:00 PM</p>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <h3>Family Tradition</h3>
-        <p>A multigenerational gathering place where families have been creating memories for over 65 years.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Hours -->
-  <footer class="footer">
-    <h2>Hours of Operation</h2>
-    <ul>
-      <li>Monday – Thursday: 11:00 AM – 10:00 PM</li>
-      <li>Friday – Saturday: 11:00 AM – 11:00 PM</li>
-      <li>Sunday: 12:00 PM – 9:00 PM</li>
-      <li>Carhop Service: May–Sep, 11:00 AM – 8:00 PM</li>
-    </ul>
-  </footer>
+    </section>
+  </main>
 </body>
 </html>
