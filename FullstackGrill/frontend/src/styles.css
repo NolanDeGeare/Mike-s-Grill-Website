@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 :root {
     --primary-red: #d11a2d;
     --dark: #1a1a1a;
@@ -169,6 +170,27 @@ h1, h2, h3, h4 {
     height: 3px;
     background-color: var(--primary-red);
     margin: 0.5rem auto 0;
+}
+
+/* Contact Page */
+.contact-section {
+    padding: 4rem 0;
+    text-align: center;
+}
+
+/* Make the contact info area match the white background used elsewhere
+   and ensure it uses the site body font (Poppins). This fixes the
+   off-white background and any font fallback issues for address/phone. */
+.contact-info {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    background-color: #ffffff; /* force white background */
+    display: inline-block; /* shrink to content width like a card */
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    font-family: var(--font-poppins); /* ensure Poppins is used */
+    color: var(--dark);
 }
 
 /* Hours of Operation */
@@ -402,4 +424,149 @@ h1, h2, h3, h4 {
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
     }
+
+    /* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #fff;
+  color: #222;
+  line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.navbar nav a {
+  color: #fff;
+  margin-left: 1.5rem;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.navbar nav a:hover,
+.navbar nav a.active {
+  color: #e63946; /* deep red accent */
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 8rem 2rem 4rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero span {
+  color: #e63946;
+}
+
+.hero img {
+  margin-top: 2rem;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+/* Content */
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.story {
+  flex: 2;
+}
+
+.highlights {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+/* Contact Layout */
+.contact {
+  padding-top: 8rem;
+}
+
+.contact-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form {
+  flex: 2;
+}
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.contact-form button {
+  background: #111;
+  color: #fff;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.contact-form button:hover {
+  background: #e63946;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  margin-top: 2rem;
+  background: #f5f5f5;
+}
 }

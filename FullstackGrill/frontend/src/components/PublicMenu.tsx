@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 interface MenuItem {
@@ -46,10 +47,10 @@ const PublicMenu: React.FC = () => {
           <h1>Mike's Grill</h1>
         </div>
         <nav className="nav">
-          <a href="/" className="nav-link">Home</a>
-          <a href="/menu" className="nav-link">Menu</a>
-          <a href="/#contact" className="nav-link">Contact</a>
-          <a href="/admin/login" className="nav-link">Admin</a>
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/menu" className="nav-link">Menu</Link>
+          <Link to="/contact" className="nav-link">Contact</Link>
+          <Link to="/admin/login" className="nav-link">Admin</Link>
         </nav>
       </header>
 

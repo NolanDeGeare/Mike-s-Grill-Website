@@ -1,1 +1,0 @@
-/opt/homebrew/Cellar/postgresql@14/14.19/bin/postgres "-D" "/Users/greg/MikesGrill/FullstackGrill/database/pgdata"
