@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import bg from '../images/BarGrill1.png'
 
 const Home: React.FC = () => {
   return (
@@ -17,7 +18,17 @@ const Home: React.FC = () => {
       </header>
 
       <main>
-        <section className="hero-section">
+        <section className="hero-section"
+  style={{
+    backgroundImage: `url(${bg})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    minHeight: '60vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }}>
           <div className="hero-content">
             <h2>Welcome to Mike's Grill</h2>
             <p>Classic American diner since 1958</p>
