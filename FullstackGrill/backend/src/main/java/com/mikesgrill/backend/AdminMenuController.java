@@ -29,28 +29,24 @@ public class AdminMenuController {
     }
 
     @PostMapping
-    public ResponseEntity<MenuItem> createMenuItem(@RequestBody MenuItem menuItem) {
-        MenuItem savedMenuItem = menuItemService.saveMenuItem(menuItem);
-        return ResponseEntity.ok(savedMenuItem);
+    public ResponseEntity<MenuItem> addMenuItem(@RequestBody MenuItem menuItem) {
+        MenuItem newMenuItem = menuItemService.addMenuItem(menuItem);
+        return ResponseEntity.status(201).body(newMenuItem);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MenuItem> updateMenuItem(@PathVariable Long id, @RequestBody MenuItem menuItem) {
-        if (!menuItemService.getMenuItemById(id).isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        menuItem.setId(id);
-        MenuItem updatedMenuItem = menuItemService.saveMenuItem(menuItem);
-        return ResponseEntity.ok(updatedMenuItem);
+        return menuItemService.updateMenuItem(id, menuItem)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMenuItem(@PathVariable Long id) {
-        if (!menuItemService.getMenuItemById(id).isPresent()) {
-            return ResponseEntity.notFound().build();
+        if (menuItemService.deleteMenuItem(id)) {
+            return ResponseEntity.noContent().build();
         }
-        menuItemService.deleteMenuItem(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/category/{category}")

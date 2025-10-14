@@ -28,7 +28,27 @@ public class MenuItemService {
         return menuItemRepository.save(menuItem);
     }
 
-    public void deleteMenuItem(Long id) {
-        menuItemRepository.deleteById(id);
+    public MenuItem addMenuItem(MenuItem menuItem) {
+        return menuItemRepository.save(menuItem);
+    }
+
+    public Optional<MenuItem> updateMenuItem(Long id, MenuItem newItem) {
+        return menuItemRepository.findById(id)
+                .map(existingItem -> {
+                    existingItem.setName(newItem.getName());
+                    existingItem.setDescription(newItem.getDescription());
+                    existingItem.setPrice(newItem.getPrice());
+                    existingItem.setImageUrl(newItem.getImageUrl());
+                    existingItem.setCategory(newItem.getCategory());
+                    return menuItemRepository.save(existingItem);
+                });
+    }
+
+    public boolean deleteMenuItem(Long id) {
+        if (menuItemRepository.existsById(id)) {
+            menuItemRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
