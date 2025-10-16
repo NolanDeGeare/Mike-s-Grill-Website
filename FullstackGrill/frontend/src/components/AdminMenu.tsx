@@ -167,11 +167,15 @@ const AdminMenu: React.FC = () => {
                   required
                 >
                   <option value="">Select Category</option>
-                  <option value="burgers">Burgers</option>
-                  <option value="sandwiches">Sandwiches</option>
-                  <option value="fries">Fries</option>
-                  <option value="drinks">Drinks</option>
-                  <option value="desserts">Desserts</option>
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Drinks">Drinks</option>
+                  <option value="Desserts">Desserts</option>
+                  <option value="Sandwiches">Sandwiches</option>
+                  <option value="Extras">Extras</option>
+                  <option value="Sides">Sides</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Kids">Kids</option>
+                  <option value="Salads">Salads</option>
                 </select>
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
