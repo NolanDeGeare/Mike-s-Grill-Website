@@ -113,6 +113,14 @@ const PublicMenu: React.FC = () => {
                 ))}
               </div>
             )}
+            <div className="senior-discount">
+  <h4>Senior Discount</h4>
+  <p>
+    Mike’s Grill proudly offers a <strong>10% discount</strong> to diners over 60.
+    <br />Inside dining only — please inform your waitress while ordering.
+  </p>
+</div>
+
 
             {/* No Items Message */}
             {!loading && !error && filteredItems.length === 0 && (

@@ -250,6 +250,14 @@ h1, h2, h3, h4 {
     padding: 4rem 0;
     min-height: 60vh;
 }
+.senior-discount {
+  border: 1px solid #ccc;
+  background: #fffbe6;
+  padding: 1em;
+  margin-top: 2em;
+  text-align: center;
+  font-weight: 500;
+}
 
 /* Category Filter */
 .category-filter {
