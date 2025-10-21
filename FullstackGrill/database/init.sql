@@ -32,7 +32,7 @@ INSERT INTO `menu_items` (`name`, `description`, `price`, `image_url`, `category
 ('Shake (Medium)', 'Delicious shake, extra rich and thick, any flavor (medium).', 3.25, NULL, 'Drinks'),
 ('Shake (Large)', 'Delicious shake, extra rich and thick, any flavor (large).', 3.75, NULL, 'Drinks'),
 ('Malt (Small)', 'Extra rich malt (small).', 3.00, NULL, 'Drinks'),
-('Malt (Small)', 'Extra rich malt (medium).', 3.50, NULL, 'Drinks')
+('Malt (Medium)', 'Extra rich malt (medium).', 3.50, NULL, 'Drinks')
 ('Malt (Large)', 'Extra rich malt (large).', 4.00, NULL, 'Drinks'),
 ('Sundae', 'Sundae - pineapple, strawberry, chocolate, butterscotch.', 3.25, NULL, 'Desserts'),
 ('Soda', 'Fountain soda (various flavors).', 3.25, NULL, 'Drinks'),
