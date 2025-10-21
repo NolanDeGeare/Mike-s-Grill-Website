@@ -39,6 +39,40 @@ const PublicMenu: React.FC = () => {
   const filteredItems = selectedCategory === 'All'
     ? menuItems
     : menuItems.filter(item => item.category === selectedCategory);
+  const sortedItems = [...filteredItems].sort((a, b) => {
+  
+  if (a.category === 'Drinks' && b.category === 'Drinks') {
+    
+    const getBase = (name: string) => {
+      if (name.toLowerCase().includes('shake')) return 'shake';
+      if (name.toLowerCase().includes('malt')) return 'malt';
+      return name.toLowerCase();
+    };
+
+    
+    const baseOrder = ['shake', 'malt', 'sundae', 'soda', 'coffee', 'tea', 'juice'];
+
+    const baseA = getBase(a.name);
+    const baseB = getBase(b.name);
+
+    const baseIndexA = baseOrder.indexOf(baseA);
+    const baseIndexB = baseOrder.indexOf(baseB);
+
+   
+    if (baseIndexA !== baseIndexB) {
+      return baseIndexA - baseIndexB;
+    }
+
+    
+    const sizeOrder = ['Small', 'Medium', 'Large'];
+    const aSize = sizeOrder.findIndex(size => a.name.includes(size));
+    const bSize = sizeOrder.findIndex(size => b.name.includes(size));
+    return aSize - bSize;
+  }
+
+  // Default fallback for other categories
+  return a.id - b.id;
+});
 
   return (
     <>
@@ -94,8 +128,9 @@ const PublicMenu: React.FC = () => {
             {/* Menu Items Grid */}
             {!loading && !error && (
               <div className="menu-grid">
-                {filteredItems.map(item => (
-                  <div key={item.id} className="menu-item-card">
+                {sortedItems.map(item => (
+  <div key={item.id} className="menu-item-card">
+
                     {item.imageUrl && (
                       <div className="menu-item-image">
                         <img src={item.imageUrl} alt={item.name} />
