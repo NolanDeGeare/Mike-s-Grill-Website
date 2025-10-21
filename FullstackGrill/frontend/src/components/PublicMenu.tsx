@@ -85,10 +85,6 @@ const PublicMenu: React.FC = () => {
   <Link to="/menu" className="nav-link">Menu</Link>
   <Link to="/contact" className="nav-link">Contact</Link>
 
-  {}
-  {localStorage.getItem("isAdmin") === "true" && (
-    <Link to="/admin/login" className="nav-link">Admin</Link>
-  )}
 </nav>
 
       </header>

@@ -12,7 +12,6 @@ const Contact: React.FC = () => {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/menu" className="nav-link">Menu</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
-          <Link to="/admin/login" className="nav-link">Admin</Link>
         </nav>
       </header>
 
