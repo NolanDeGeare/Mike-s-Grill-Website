@@ -168,11 +168,8 @@ const PublicMenu: React.FC = () => {
         </section>
       </main>
 
-      <footer className="footer">
-        <div className="container">
-          <p>&copy; 2025 Mike's Grill. All rights reserved.</p>
-        </div>
-      </footer>
+      
+
     </>
   );
 };
