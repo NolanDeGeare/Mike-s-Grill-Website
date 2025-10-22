@@ -7,7 +7,7 @@ This is a GitHub repo. Full stack Website for Mike's Grill
 
 2) Install React
 
-3) To start the backend server, open FullstackGrill/backend in the terminal and run 'mvn spring:boot-run'
+3) To start the backend server, open FullstackGrill/backend in the terminal and run 'mvn spring-boot:run'
 
 4) To start the frontend server, open FullstackGrill/frontend in the terminal and run 'npm start'
 
