@@ -1,0 +1,61 @@
+classDiagram
+    class PublicMenuController {
+        <<RestController>>
+        -MenuItemService menuItemService
+        +List~MenuItem~ getAllMenuItems()
+        +List~MenuItem~ getMenuItemsByCategory(String)
+    }
+
+    class AdminMenuController {
+        <<RestController>>
+        -MenuItemService menuItemService
+        +ResponseEntity~List~MenuItem~~ getAllMenuItems()
+        +ResponseEntity~MenuItem~ getMenuItemById(Long)
+        +ResponseEntity~MenuItem~ addMenuItem(MenuItem)
+        +ResponseEntity~MenuItem~ updateMenuItem(Long, MenuItem)
+        +ResponseEntity~Void~ deleteMenuItem(Long)
+    }
+
+    class MenuItemService {
+        <<Service>>
+        -MenuItemRepository menuItemRepository
+        +List~MenuItem~ getAllMenuItems()
+        +List~MenuItem~ getMenuItemsByCategory(String)
+        +Optional~MenuItem~ getMenuItemById(Long)
+        +MenuItem addMenuItem(MenuItem)
+        +Optional~MenuItem~ updateMenuItem(Long, MenuItem)
+        +boolean deleteMenuItem(Long)
+    }
+
+    class MenuItemRepository {
+        <<Repository>>
+        +List~MenuItem~ findByCategory(String)
+    }
+
+    class MenuItem {
+        <<Entity>>
+        -Long id
+        -String name
+        -String description
+        -Double price
+        -String imageUrl
+        -String category
+    }
+    
+    class SecurityConfig {
+        <<Configuration>>
+        +SecurityFilterChain filterChain(HttpSecurity)
+        +UserDetailsService userDetailsService()
+        +PasswordEncoder passwordEncoder()
+    }
+
+    %% Associations and Multiplicities
+    PublicMenuController --> "1" MenuItemService : uses
+    AdminMenuController --> "1" MenuItemService : uses
+    MenuItemService --> "1" MenuItemRepository : uses
+    MenuItemRepository "1" o-- "*" MenuItem : manages
+    MenuItemService "1" -- "*" MenuItem : returns
+
+    %% Security
+    AdminMenuController ..> SecurityConfig : secured by
+    PublicMenuController ..> SecurityConfig : secured by
