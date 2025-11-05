@@ -1,0 +1,351 @@
+/* Carousel Container */
+.carousel-container {
+  margin: 4rem auto;
+  max-width: 900px;
+  padding: 0 1rem;
+  position: relative;
+}
+
+.carousel-title {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  color: var(--primary-red, #d11a2d);
+  font-family: var(--font-atomic, 'Oswald', sans-serif);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.carousel-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: visible;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carousel-wrapper .slick-slider {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.carousel-container:hover .carousel-wrapper {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2), 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Carousel Slide */
+.carousel-slide {
+  position: relative;
+  outline: none;
+}
+
+.carousel-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: visible;
+  background: var(--light, #f5f5f5);
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s ease;
+  display: block;
+}
+
+.carousel-slide:hover .carousel-image {
+  transform: scale(1.05);
+}
+
+/* Overlay with Gradient */
+.carousel-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0;
+  z-index: 2;
+}
+
+.carousel-overlay-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.7) 40%,
+    rgba(0, 0, 0, 0.4) 70%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.carousel-content {
+  position: relative;
+  padding: 2.5rem 2rem 2rem;
+  color: #fff;
+  z-index: 3;
+}
+
+.carousel-item-name {
+  font-family: var(--font-poppins, 'Poppins', sans-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.carousel-item-description {
+  font-family: var(--font-poppins, 'Poppins', sans-serif);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+}
+
+
+/* Hide default slick arrows */
+.carousel-wrapper .slick-prev,
+.carousel-wrapper .slick-next {
+  display: none !important;
+}
+
+/* Clickable edge areas for navigation */
+.carousel-edge-click {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  z-index: 10;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.carousel-edge-left {
+  left: 0;
+}
+
+.carousel-edge-right {
+  right: 0;
+}
+
+.carousel-edge-click:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.carousel-edge-click:active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dots Navigation */
+.carousel-wrapper .slick-dots {
+  bottom: 20px;
+  z-index: 5;
+}
+
+.carousel-wrapper .slick-dots li {
+  margin: 0 8px;
+  width: auto;
+}
+
+.carousel-wrapper .slick-dots li button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  padding: 0;
+  margin: 0;
+}
+
+.carousel-wrapper .slick-dots li button:before {
+  display: none;
+}
+
+.carousel-wrapper .slick-dots li.slick-active {
+  margin: 0 12px;
+}
+
+.carousel-wrapper .slick-dots li.slick-active button {
+  background: var(--primary-red, #d11a2d);
+  border-color: #fff;
+  width: 32px;
+  border-radius: 6px;
+  transform: scale(1);
+}
+
+.carousel-wrapper .slick-dots li button:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.1);
+}
+
+/* Active Slide Highlighting */
+.carousel-wrapper .slick-slide {
+  opacity: 0.95;
+  transition: opacity 0.6s ease;
+}
+
+.carousel-wrapper .slick-active {
+  opacity: 1;
+}
+
+.carousel-wrapper .slick-slide:not(.slick-active) .carousel-image {
+  filter: brightness(0.7);
+}
+
+.carousel-wrapper .slick-active .carousel-image {
+  filter: brightness(1);
+}
+
+/* Fade Animation */
+.carousel-wrapper .slick-slide {
+  transition: opacity 0.8s ease-in-out;
+}
+
+.carousel-wrapper .slick-fade .slick-slide {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.carousel-wrapper .slick-fade .slick-slide.slick-active {
+  opacity: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .carousel-container {
+    margin: 2rem auto;
+    padding: 0 0.5rem;
+  }
+
+  .carousel-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .carousel-image-wrapper {
+    height: 400px;
+  }
+
+  .carousel-content {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  .carousel-item-name {
+    font-size: 1.75rem;
+  }
+
+  .carousel-item-description {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .carousel-arrow {
+    width: 40px;
+    height: 40px;
+    opacity: 0.7;
+    visibility: visible;
+  }
+
+  .carousel-arrow-prev {
+    left: 10px;
+  }
+
+  .carousel-arrow-next {
+    right: 10px;
+  }
+
+  .carousel-wrapper .slick-dots {
+    bottom: 15px;
+  }
+
+  .carousel-wrapper .slick-dots li {
+    margin: 0 6px;
+  }
+
+  .carousel-wrapper .slick-dots li button {
+    width: 10px;
+    height: 10px;
+  }
+
+  .carousel-wrapper .slick-dots li.slick-active {
+    margin: 0 10px;
+  }
+
+  .carousel-wrapper .slick-dots li.slick-active button {
+    width: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-image-wrapper {
+    height: 350px;
+  }
+
+  .carousel-content {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .carousel-item-name {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .carousel-item-description {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Touch and Swipe Enhancements */
+.carousel-wrapper .slick-slider {
+  touch-action: pan-y;
+}
+
+.carousel-wrapper .slick-list {
+  overflow: hidden;
+}
+
+/* Accessibility - handled in arrow section above */
+
+/* Loading State */
+.carousel-image {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.carousel-image[src] {
+  animation: none;
+  background: transparent;
+}
+
+/* Smooth transitions for all interactive elements */
+.carousel-wrapper * {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+

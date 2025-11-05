@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import './MenuCarousel.css';
 
 interface MenuItem {
   id: number;
@@ -15,6 +16,8 @@ interface MenuItem {
 
 const MenuCarousel: React.FC = () => {
   const [featuredItems, setFeaturedItems] = useState<MenuItem[]>([]);
+  const [isHovered, setIsHovered] = useState(false);
+  const sliderRef = useRef<Slider>(null);
 
   useEffect(() => {
     const fetchFeaturedItems = async () => {
@@ -36,33 +39,76 @@ const MenuCarousel: React.FC = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
+    speed: 800,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: true,
+    autoplay: !isHovered,
+    autoplaySpeed: 4000,
+    fade: true,
+    cssEase: 'ease-in-out',
+    arrows: false,
+    pauseOnHover: true,
+    swipe: true,
+    draggable: true,
+    touchMove: true,
+    accessibility: true,
+    adaptiveHeight: false,
+  };
+
+  const goToPrevious = () => {
+    if (sliderRef.current) {
+      sliderRef.current.slickPrev();
+    }
+  };
+
+  const goToNext = () => {
+    if (sliderRef.current) {
+      sliderRef.current.slickNext();
+    }
   };
 
   return (
-    <div className="carousel-container" style={{ margin: '2rem auto', maxWidth: '800px' }}>
-      <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Featured Items</h2>
-      <Slider {...settings}>
-        {featuredItems.map((item) => (
-          <div key={item.id}>
-            <img src={item.imageUrl} alt={item.name} style={{ width: '100%', maxHeight: '400px', objectFit: 'cover' }} />
-            <div style={{ 
-              backgroundColor: 'rgba(255, 255, 255, 1)',
-              color: 'black',
-              padding: '1rem',
-              textAlign: 'left'
-            }}>
-              <h3 style={{ margin: '0 0 0.5rem 0' }}>{item.name}</h3>
-              <p style={{ margin: 0 }}>{item.description}</p>
+    <div 
+      className="carousel-container"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <h2 className="section-title carousel-title">Featured Items</h2>
+      <div className="carousel-wrapper">
+        <div 
+          className="carousel-edge-click carousel-edge-left"
+          onClick={goToPrevious}
+          aria-label="Previous slide"
+        />
+        <div 
+          className="carousel-edge-click carousel-edge-right"
+          onClick={goToNext}
+          aria-label="Next slide"
+        />
+        <Slider 
+          {...settings}
+          ref={sliderRef}
+        >
+          {featuredItems.map((item) => (
+            <div key={item.id} className="carousel-slide">
+              <div className="carousel-image-wrapper">
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.name}
+                  className="carousel-image"
+                />
+                <div className="carousel-overlay">
+                  <div className="carousel-overlay-gradient"></div>
+                  <div className="carousel-content">
+                    <h3 className="carousel-item-name">{item.name}</h3>
+                    <p className="carousel-item-description">{item.description}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-      </Slider>
+          ))}
+        </Slider>
+      </div>
     </div>
   );
 };
