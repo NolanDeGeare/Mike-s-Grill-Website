@@ -20,6 +20,10 @@ public class MenuItemService {
         return menuItemRepository.findByCategory(category);
     }
 
+    public List<MenuItem> getFeaturedMenuItems() {
+        return menuItemRepository.findByFeatured(true);
+    }
+
     public Optional<MenuItem> getMenuItemById(Long id) {
         return menuItemRepository.findById(id);
     }
@@ -40,6 +44,7 @@ public class MenuItemService {
                     existingItem.setPrice(newItem.getPrice());
                     existingItem.setImageUrl(newItem.getImageUrl());
                     existingItem.setCategory(newItem.getCategory());
+                    existingItem.setFeatured(newItem.isFeatured());
                     return menuItemRepository.save(existingItem);
                 });
     }

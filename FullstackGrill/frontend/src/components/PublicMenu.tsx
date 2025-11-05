@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
+import MenuCarousel from './MenuCarousel';
 interface MenuItem {
   id: number;
   name: string;
@@ -81,12 +81,10 @@ const PublicMenu: React.FC = () => {
           <h1>Mike's Grill</h1>
         </div>
         <nav className="nav">
-  <Link to="/" className="nav-link">Home</Link>
-  <Link to="/menu" className="nav-link">Menu</Link>
-  <Link to="/contact" className="nav-link">Contact</Link>
-
-</nav>
-
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/menu" className="nav-link">Menu</Link>
+          <Link to="/contact" className="nav-link">Contact</Link>
+        </nav>
       </header>
 
       <main>
@@ -96,6 +94,8 @@ const PublicMenu: React.FC = () => {
             <p className="menu-subtitle">Classic American diner fare since 1958</p>
           </div>
         </section>
+
+        <MenuCarousel />
 
         <section className="menu-section">
           <div className="container">

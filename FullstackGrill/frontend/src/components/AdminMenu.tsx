@@ -9,6 +9,7 @@ interface MenuItem {
   price: number;
   imageUrl: string;
   category: string;
+  featured: boolean;
 }
 
 const AdminMenu: React.FC = () => {
@@ -19,7 +20,8 @@ const AdminMenu: React.FC = () => {
     description: '',
     price: 0,
     imageUrl: '',
-    category: ''
+    category: '',
+    featured: false
   });
   const navigate = useNavigate();
 
@@ -64,7 +66,7 @@ const AdminMenu: React.FC = () => {
         });
       }
 
-      setFormData({ name: '', description: '', price: 0, imageUrl: '', category: '' });
+      setFormData({ name: '', description: '', price: 0, imageUrl: '', category: '', featured: false });
       setEditingItem(null);
       fetchMenuItems();
     } catch (error) {
@@ -152,10 +154,11 @@ const AdminMenu: React.FC = () => {
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Image URL:</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                   style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }}
+                  placeholder="/images/ItemName.jpeg or https://example.com/image.jpg"
                 />
               </div>
               <div style={{ marginBottom: '1rem' }}>
@@ -178,6 +181,17 @@ const AdminMenu: React.FC = () => {
                   <option value="Salads">Salads</option>
                 </select>
               </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                    style={{ marginRight: '0.5rem' }}
+                  />
+                  Featured Item
+                </label>
+              </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <button
                   type="submit"
@@ -198,7 +212,7 @@ const AdminMenu: React.FC = () => {
                     type="button"
                     onClick={() => {
                       setEditingItem(null);
-                      setFormData({ name: '', description: '', price: 0, imageUrl: '', category: '' });
+                      setFormData({ name: '', description: '', price: 0, imageUrl: '', category: '', featured: false });
                     }}
                     style={{
                       flex: 1,
@@ -235,7 +249,7 @@ const AdminMenu: React.FC = () => {
                     alignItems: 'center'
                   }}>
                     <div>
-                      <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--primary-red)' }}>{item.name}</h4>
+                      <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--primary-red)' }}>{item.name} {item.featured && '(Featured)'}</h4>
                       <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>{item.description}</p>
                       <p style={{ margin: '0', fontWeight: 'bold' }}>${item.price.toFixed(2)} - {item.category}</p>
                     </div>

@@ -452,6 +452,7 @@ h1, h2, h3, h4 {
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
     }
+}
 
     /* General Reset */
 * {
@@ -590,13 +591,63 @@ body {
   background: #e63946;
 }
 
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 2rem;
-  margin-top: 2rem;
-  background: #f5f5f5;
+/* New Contact Form Styles */
+.contact-form-section {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
 }
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #c0392b;
+  outline: none;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #c0392b;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #a93226;
 }
 .map-box {
   max-width: 900px;

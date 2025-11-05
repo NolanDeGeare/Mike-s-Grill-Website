@@ -19,16 +19,18 @@ public class MenuItem {
     private Double price;
     private String imageUrl;
     private String category;
+    private boolean featured;
 
     // Constructors
     public MenuItem() {}
 
-    public MenuItem(String name, String description, Double price, String imageUrl, String category) {
+    public MenuItem(String name, String description, Double price, String imageUrl, String category, boolean featured) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
+        this.featured = featured;
     }
 
     // Getters and Setters
@@ -78,5 +80,13 @@ public class MenuItem {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
     }
 }

@@ -18,6 +18,11 @@ public class PublicMenuController {
         return menuItemService.getAllMenuItems();
     }
 
+    @GetMapping("/featured")
+    public List<MenuItem> getFeaturedMenuItems() {
+        return menuItemService.getFeaturedMenuItems();
+    }
+
     @GetMapping("/category/{category}")
     public List<MenuItem> getMenuItemsByCategory(@PathVariable String category) {
         return menuItemService.getMenuItemsByCategory(category);
