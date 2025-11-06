@@ -32,6 +32,12 @@ CREATE TABLE IF NOT EXISTS `site_settings` (
   `hero_image_url` VARCHAR(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `menu_categories` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `sort_order` INT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Optional: uncomment the next line to truncate the table before inserting
 -- TRUNCATE TABLE `menu_items`;
 
@@ -113,5 +119,16 @@ INSERT INTO `restaurant_hours` (`day_of_week`, `open_time`, `close_time`, `close
 
 INSERT INTO `site_settings` (`hero_image_url`) VALUES
 (NULL);
+
+INSERT INTO `menu_categories` (`name`, `sort_order`) VALUES
+('Breakfast', 1),
+('Drinks', 2),
+('Desserts', 3),
+('Sandwiches', 4),
+('Extras', 5),
+('Sides', 6),
+('Dinner', 7),
+('Kids', 8),
+('Salads', 9);
 
 SET FOREIGN_KEY_CHECKS=1;

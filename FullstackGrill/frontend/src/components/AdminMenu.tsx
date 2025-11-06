@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { RestaurantHours, SiteSettings } from '../types';
+import { RestaurantHours, SiteSettings, MenuCategory } from '../types';
 
 interface MenuItem {
   id?: number;
@@ -34,12 +34,18 @@ const AdminMenu: React.FC = () => {
   const [heroFilePreview, setHeroFilePreview] = useState<string | null>(null);
   const [settingsMessage, setSettingsMessage] = useState<string | null>(null);
   const [savingHero, setSavingHero] = useState(false);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoryMessage, setCategoryMessage] = useState<string | null>(null);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [menuSearchTerm, setMenuSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchMenuItems();
     fetchHours();
     fetchSiteSettings();
+    fetchCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -50,6 +56,12 @@ const AdminMenu: React.FC = () => {
       }
     };
   }, [heroFilePreview]);
+
+  useEffect(() => {
+    if (categories.length > 0 && !formData.category) {
+      setFormData((prev) => ({ ...prev, category: categories[0].name }));
+    }
+  }, [categories, formData.category]);
 
   const fetchMenuItems = async () => {
     try {
@@ -113,6 +125,29 @@ const AdminMenu: React.FC = () => {
     } catch (error) {
       console.error('Error fetching site settings:', error);
       setSettingsMessage('Unable to load site settings.');
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      const response = await axios.get('http://localhost:8080/api/admin/categories', {
+        auth: { username, password }
+      });
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setCategoryMessage('Unable to load categories.');
+    } finally {
+      setCategoriesLoading(false);
     }
   };
 
@@ -243,6 +278,65 @@ const AdminMenu: React.FC = () => {
     }
   };
 
+  const handleCategoryNameChange = (id: number, value: string) => {
+    setCategories((prev) =>
+      prev.map((cat) => (cat.id === id ? { ...cat, name: value } : cat))
+    );
+  };
+
+  const handleSaveCategory = async (category: MenuCategory) => {
+    try {
+      setCategoryMessage(null);
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      await axios.put(
+        `http://localhost:8080/api/admin/categories/${category.id}`,
+        { name: category.name, sortOrder: category.sortOrder },
+        { auth: { username, password } }
+      );
+      setCategoryMessage('Category updated.');
+      fetchCategories();
+    } catch (error) {
+      console.error('Error updating category:', error);
+      setCategoryMessage('Failed to update category.');
+    }
+  };
+
+  const handleAddCategory = async () => {
+    if (!newCategoryName.trim()) {
+      setCategoryMessage('Please enter a category name.');
+      return;
+    }
+    try {
+      setCategoryMessage(null);
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      await axios.post(
+        'http://localhost:8080/api/admin/categories',
+        { name: newCategoryName },
+        { auth: { username, password } }
+      );
+      setNewCategoryName('');
+      setCategoryMessage('Category added.');
+      fetchCategories();
+    } catch (error) {
+      console.error('Error adding category:', error);
+      setCategoryMessage('Failed to add category.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -315,6 +409,18 @@ const AdminMenu: React.FC = () => {
     border: '1px solid #ddd'
   };
 
+  const normalizedSearch = menuSearchTerm.trim().toLowerCase();
+  const visibleMenuItems = menuItems.filter((item) => {
+    if (!normalizedSearch) {
+      return true;
+    }
+    return (
+      item.name.toLowerCase().includes(normalizedSearch) ||
+      item.description.toLowerCase().includes(normalizedSearch) ||
+      item.category.toLowerCase().includes(normalizedSearch)
+    );
+  });
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--light)' }}>
       <header className="header">
@@ -382,17 +488,17 @@ const AdminMenu: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }}
                   required
+                  disabled={categoriesLoading || categories.length === 0}
                 >
-                  <option value="">Select Category</option>
-                  <option value="Breakfast">Breakfast</option>
-                  <option value="Drinks">Drinks</option>
-                  <option value="Desserts">Desserts</option>
-                  <option value="Sandwiches">Sandwiches</option>
-                  <option value="Extras">Extras</option>
-                  <option value="Sides">Sides</option>
-                  <option value="Dinner">Dinner</option>
-                  <option value="Kids">Kids</option>
-                  <option value="Salads">Salads</option>
+                  <option value="">{categoriesLoading ? 'Loading...' : 'Select Category'}</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                  {!categories.some((cat) => cat.name === formData.category) && formData.category && (
+                    <option value={formData.category}>{formData.category}</option>
+                  )}
                 </select>
               </div>
               <div style={{ marginBottom: '1rem' }}>
@@ -448,11 +554,25 @@ const AdminMenu: React.FC = () => {
           {/* Menu Items List */}
           <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
             <h3>Current Menu Items</h3>
+            <div style={{ margin: '1rem 0' }}>
+              <input
+                type="text"
+                value={menuSearchTerm}
+                onChange={(e) => setMenuSearchTerm(e.target.value)}
+                placeholder="Search by name, description, or category..."
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '6px'
+                }}
+              />
+            </div>
             <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
-              {menuItems.length === 0 ? (
+              {visibleMenuItems.length === 0 ? (
                 <p>No menu items found. Add your first item!</p>
               ) : (
-                menuItems.map((item) => (
+                visibleMenuItems.map((item) => (
                   <div key={item.id} style={{
                     border: '1px solid #eee',
                     borderRadius: '8px',
@@ -601,6 +721,73 @@ const AdminMenu: React.FC = () => {
                     }}
                   >
                     Reload
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        <section style={{ marginTop: '3rem' }}>
+          <h2 style={{ color: 'var(--primary-red)', marginBottom: '1.5rem' }}>Categories</h2>
+          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            {categoriesLoading ? (
+              <p>Loading categories...</p>
+            ) : (
+              <>
+                {categoryMessage && (
+                  <p style={{ marginBottom: '1rem', color: categoryMessage.includes('fail') ? '#dc3545' : '#198754' }}>
+                    {categoryMessage}
+                  </p>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {categories.map((category) => (
+                    <div key={category.id} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        value={category.name}
+                        onChange={(e) => handleCategoryNameChange(category.id, e.target.value)}
+                        style={{ flex: '1 1 250px', padding: '0.75rem', border: '1px solid #ccc', borderRadius: '6px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleSaveCategory(category)}
+                        style={{
+                          padding: '0.6rem 1.2rem',
+                          backgroundColor: 'var(--primary-red)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '1.5rem 0' }} />
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="New category name"
+                    style={{ flex: '1 1 250px', padding: '0.75rem', border: '1px solid #ccc', borderRadius: '6px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddCategory}
+                    style={{
+                      padding: '0.6rem 1.2rem',
+                      backgroundColor: '#007bff',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Add Category
                   </button>
                 </div>
               </>

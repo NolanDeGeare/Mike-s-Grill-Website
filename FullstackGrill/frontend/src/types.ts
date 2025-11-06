@@ -11,3 +11,9 @@ export interface SiteSettings {
   id?: number;
   heroImageUrl: string | null;
 }
+
+export interface MenuCategory {
+  id: number;
+  name: string;
+  sortOrder: number;
+}
