@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { RestaurantHours } from '../types';
 
 const Contact: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [hours, setHours] = useState<RestaurantHours[]>([]);
+  const [loadingHours, setLoadingHours] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +40,25 @@ const Contact: React.FC = () => {
       alert('An error occurred. Please try again later.');
     }
   };
+
+  useEffect(() => {
+    const loadHours = async () => {
+      try {
+        const response = await fetch('/api/public/hours');
+        if (!response.ok) {
+          throw new Error('Failed to fetch hours of operation');
+        }
+        const data: RestaurantHours[] = await response.json();
+        setHours(data);
+      } catch (error) {
+        console.error('Error fetching hours of operation:', error);
+      } finally {
+        setLoadingHours(false);
+      }
+    };
+
+    loadHours();
+  }, []);
 
   return (
     <>
@@ -100,41 +122,31 @@ const Contact: React.FC = () => {
           </div>
         </section>
 
-<div className="map-box">
-  <h3>Find Us Here</h3>
-  <div className="map-frame">
-    <iframe
-      title="Mike's Grill Location"
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.956198768846!2d-87.63811502375798!3d40.088038971494385!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880d50dcf7e166ff%3A0xf29928a8b96d8c22!2sMike&#39;s%20Grill!5e1!3m2!1sen!2sus!4v1761100958426!5m2!1sen!2sus"
-      width="100%"
-      height="400"
-      style={{ border: 0, borderRadius: "10px" }}
-      allowFullScreen={true}
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    ></iframe>
-  </div>
-
-  {/* Optional “Get Directions” button */}
-  <a
-    href="https://www.google.com/maps/dir/?api=1&destination=Mike's+Grill,+2006+Georgetown+Rd,+Tilton,+IL+61833"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="directions-btn"
-  >
-    📍 Get Directions
-  </a>
-</div>
-
         <section id="hours" className="hours-section">
           <div className="container">
-            <h3 className="section-title">Hours of Operation</h3>
-            <div className="hours-grid">
-              <div className="hours-col">
-                <h4>Mon - Sat:</h4><p>11:00 AM - 9:00 PM</p>
-              </div>
-              <div className="hours-col">
-                <h4>Sunday:</h4><p>Closed</p>
+            <div className="hours-shell">
+              <div className="hours-container">
+                <div className="hours-panel">
+                  <h3 className="section-title">Hours of Operation</h3>
+                  {loadingHours ? (
+                    <p className="hours-message">Loading hours...</p>
+                  ) : hours.length === 0 ? (
+                    <p className="hours-message">Hours information is currently unavailable.</p>
+                  ) : (
+                    <ul className="hours-list">
+                      {hours.map((entry) => (
+                        <li className="hours-item" key={entry.id ?? entry.dayOfWeek}>
+                          <span className="hours-day">{entry.dayOfWeek}</span>
+                          <span className="hours-time">
+                            {entry.closed
+                              ? 'Closed'
+                              : `${entry.openTime || 'TBD'} - ${entry.closeTime || 'TBD'}`}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
           </div>

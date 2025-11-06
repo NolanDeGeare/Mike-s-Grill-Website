@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -16,7 +16,6 @@ interface MenuItem {
 
 const MenuCarousel: React.FC = () => {
   const [featuredItems, setFeaturedItems] = useState<MenuItem[]>([]);
-  const [isHovered, setIsHovered] = useState(false);
   const sliderRef = useRef<Slider>(null);
 
   useEffect(() => {
@@ -32,6 +31,12 @@ const MenuCarousel: React.FC = () => {
     fetchFeaturedItems();
   }, []);
 
+  useEffect(() => {
+    if (featuredItems.length > 0 && sliderRef.current) {
+      sliderRef.current.slickPlay?.();
+    }
+  }, [featuredItems]);
+
   if (featuredItems.length === 0) {
     return null; // Don't render the carousel if there are no featured items
   }
@@ -42,7 +47,7 @@ const MenuCarousel: React.FC = () => {
     speed: 800,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: !isHovered,
+    autoplay: true,
     autoplaySpeed: 4000,
     fade: true,
     cssEase: 'ease-in-out',
@@ -52,7 +57,7 @@ const MenuCarousel: React.FC = () => {
     draggable: true,
     touchMove: true,
     accessibility: true,
-    adaptiveHeight: false,
+    adaptiveHeight: false
   };
 
   const goToPrevious = () => {
@@ -68,11 +73,7 @@ const MenuCarousel: React.FC = () => {
   };
 
   return (
-    <div 
-      className="carousel-container"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="carousel-container">
       <h2 className="section-title carousel-title">Featured Items</h2>
       <div className="carousel-wrapper">
         <div 

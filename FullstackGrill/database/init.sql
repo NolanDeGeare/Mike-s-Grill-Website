@@ -18,6 +18,20 @@ CREATE TABLE IF NOT EXISTS `menu_items` (
   `category` VARCHAR(100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `restaurant_hours` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `day_of_week` VARCHAR(20) NOT NULL,
+  `open_time` VARCHAR(20),
+  `close_time` VARCHAR(20),
+  `closed` TINYINT(1) DEFAULT 0,
+  `sort_order` INT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `site_settings` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `hero_image_url` VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Optional: uncomment the next line to truncate the table before inserting
 -- TRUNCATE TABLE `menu_items`;
 
@@ -87,5 +101,17 @@ INSERT INTO `menu_items` (`name`, `description`, `price`, `image_url`, `category
 ('Cottage Cheese', 'Cottage cheese side.', 3.25, NULL, 'Sides'),
 ('Potato Salad', 'Potato salad, made fresh daily.', 3.25, NULL, 'Sides'),
 ('Cole Slaw', 'Cole slaw, made fresh daily.', 3.25, NULL, 'Sides');
+
+INSERT INTO `restaurant_hours` (`day_of_week`, `open_time`, `close_time`, `closed`, `sort_order`) VALUES
+('Monday', '11:00 AM', '9:00 PM', 0, 1),
+('Tuesday', '11:00 AM', '9:00 PM', 0, 2),
+('Wednesday', '11:00 AM', '9:00 PM', 0, 3),
+('Thursday', '11:00 AM', '9:00 PM', 0, 4),
+('Friday', '11:00 AM', '10:00 PM', 0, 5),
+('Saturday', '11:00 AM', '10:00 PM', 0, 6),
+('Sunday', '', '', 1, 7);
+
+INSERT INTO `site_settings` (`hero_image_url`) VALUES
+(NULL);
 
 SET FOREIGN_KEY_CHECKS=1;

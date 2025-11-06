@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { RestaurantHours, SiteSettings } from '../types';
 
 interface MenuItem {
   id?: number;
@@ -23,12 +24,32 @@ const AdminMenu: React.FC = () => {
     category: '',
     featured: false
   });
+  const [hours, setHours] = useState<RestaurantHours[]>([]);
+  const [hoursLoading, setHoursLoading] = useState(true);
+  const [savingHours, setSavingHours] = useState(false);
+  const [hoursMessage, setHoursMessage] = useState<string | null>(null);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [heroImageInput, setHeroImageInput] = useState('');
+  const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [heroFilePreview, setHeroFilePreview] = useState<string | null>(null);
+  const [settingsMessage, setSettingsMessage] = useState<string | null>(null);
+  const [savingHero, setSavingHero] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchMenuItems();
+    fetchHours();
+    fetchSiteSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (heroFilePreview) {
+        URL.revokeObjectURL(heroFilePreview);
+      }
+    };
+  }, [heroFilePreview]);
 
   const fetchMenuItems = async () => {
     try {
@@ -47,6 +68,178 @@ const AdminMenu: React.FC = () => {
     } catch (error) {
       console.error('Error fetching menu items:', error);
       navigate('/admin/login');
+    }
+  };
+
+  const fetchHours = async () => {
+    setHoursLoading(true);
+    setHoursMessage(null);
+    try {
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      const response = await axios.get('http://localhost:8080/api/admin/hours', {
+        auth: { username, password }
+      });
+      setHours(response.data);
+    } catch (error) {
+      console.error('Error fetching hours of operation:', error);
+      setHoursMessage('Unable to load hours. Please refresh the page.');
+    } finally {
+      setHoursLoading(false);
+    }
+  };
+
+  const fetchSiteSettings = async () => {
+    try {
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      const response = await axios.get('http://localhost:8080/api/admin/settings', {
+        auth: { username, password }
+      });
+      setSiteSettings(response.data);
+      setHeroImageInput(response.data.heroImageUrl || '');
+    } catch (error) {
+      console.error('Error fetching site settings:', error);
+      setSettingsMessage('Unable to load site settings.');
+    }
+  };
+
+  const handleHoursFieldChange = (id: number, field: 'openTime' | 'closeTime', value: string) => {
+    setHours((prev) =>
+      prev.map((entry) =>
+        entry.id === id ? { ...entry, [field]: value } : entry
+      )
+    );
+  };
+
+  const handleHoursClosedToggle = (id: number, closed: boolean) => {
+    setHours((prev) =>
+      prev.map((entry) =>
+        entry.id === id
+          ? {
+              ...entry,
+              closed,
+              openTime: closed ? '' : entry.openTime,
+              closeTime: closed ? '' : entry.closeTime
+            }
+          : entry
+      )
+    );
+  };
+
+  const handleSaveHours = async () => {
+    try {
+      setSavingHours(true);
+      setHoursMessage(null);
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      const response = await axios.put('http://localhost:8080/api/admin/hours', hours, {
+        auth: { username, password }
+      });
+      setHours(response.data);
+      setHoursMessage('Hours updated successfully.');
+    } catch (error) {
+      console.error('Error updating hours of operation:', error);
+      setHoursMessage('Failed to update hours. Please try again.');
+    } finally {
+      setSavingHours(false);
+    }
+  };
+
+  const handleSaveHeroImage = async () => {
+    try {
+      setSavingHero(true);
+      setSettingsMessage(null);
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      const response = await axios.put(
+        'http://localhost:8080/api/admin/settings/hero-image',
+        { heroImageUrl: heroImageInput },
+        { auth: { username, password } }
+      );
+      setSiteSettings(response.data);
+      setHeroImageInput(response.data.heroImageUrl || '');
+      setSettingsMessage('Hero image updated successfully.');
+    } catch (error) {
+      console.error('Error updating hero image:', error);
+      setSettingsMessage('Failed to update hero image. Please try again.');
+    } finally {
+      setSavingHero(false);
+    }
+  };
+
+  const handleHeroFileChange = (file: File | null) => {
+    if (heroFilePreview) {
+      URL.revokeObjectURL(heroFilePreview);
+    }
+    setHeroFile(file);
+    if (file) {
+      setHeroFilePreview(URL.createObjectURL(file));
+    } else {
+      setHeroFilePreview(null);
+    }
+  };
+
+  const handleUploadHeroImage = async () => {
+    if (!heroFile) {
+      setSettingsMessage('Please choose an image to upload.');
+      return;
+    }
+    try {
+      setSavingHero(true);
+      setSettingsMessage(null);
+      const username = localStorage.getItem('adminUsername');
+      const password = localStorage.getItem('adminPassword');
+
+      if (!username || !password) {
+        navigate('/admin/login');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', heroFile);
+
+      const response = await axios.post(
+        'http://localhost:8080/api/admin/settings/hero-image/upload',
+        formData,
+        {
+          auth: { username, password },
+          headers: { 'Content-Type': 'multipart/form-data' }
+        }
+      );
+      setSiteSettings(response.data);
+      setHeroImageInput(response.data.heroImageUrl || '');
+      handleHeroFileChange(null);
+      setSettingsMessage('Image uploaded and hero updated successfully.');
+    } catch (error) {
+      console.error('Error uploading hero image:', error);
+      setSettingsMessage('Image upload failed. Please try again.');
+    } finally {
+      setSavingHero(false);
     }
   };
 
@@ -99,6 +292,27 @@ const AdminMenu: React.FC = () => {
     localStorage.removeItem('adminUsername');
     localStorage.removeItem('adminPassword');
     navigate('/');
+  };
+
+  const hoursTableHeaderStyle: React.CSSProperties = {
+    textAlign: 'left',
+    padding: '0.75rem',
+    borderBottom: '2px solid #ddd',
+    fontWeight: 600
+  };
+
+  const hoursTableCellStyle: React.CSSProperties = {
+    padding: '0.75rem',
+    borderBottom: '1px solid #eee',
+    verticalAlign: 'middle'
+  };
+
+  const heroPreviewStyle: React.CSSProperties = {
+    width: '100%',
+    height: '220px',
+    borderRadius: '8px',
+    objectFit: 'cover',
+    border: '1px solid #ddd'
   };
 
   return (
@@ -288,6 +502,205 @@ const AdminMenu: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <section style={{ marginTop: '3rem' }}>
+          <h2 style={{ color: 'var(--primary-red)', marginBottom: '1.5rem' }}>Hours of Operation</h2>
+          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            {hoursLoading ? (
+              <p>Loading hours...</p>
+            ) : hours.length === 0 ? (
+              <p>No hours configured yet.</p>
+            ) : (
+              <>
+                {hoursMessage && (
+                  <p style={{ marginBottom: '1rem', color: hoursMessage.includes('successfully') ? '#198754' : '#dc3545' }}>
+                    {hoursMessage}
+                  </p>
+                )}
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th style={hoursTableHeaderStyle}>Day</th>
+                        <th style={hoursTableHeaderStyle}>Open</th>
+                        <th style={hoursTableHeaderStyle}>Close</th>
+                        <th style={hoursTableHeaderStyle}>Closed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hours.map((entry) => (
+                        <tr key={entry.id}>
+                          <td style={hoursTableCellStyle}>{entry.dayOfWeek}</td>
+                          <td style={hoursTableCellStyle}>
+                            <input
+                              type="text"
+                              value={entry.openTime}
+                              onChange={(e) => handleHoursFieldChange(entry.id, 'openTime', e.target.value)}
+                              disabled={entry.closed}
+                              style={{
+                                width: '100%',
+                                padding: '0.5rem',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px'
+                              }}
+                            />
+                          </td>
+                          <td style={hoursTableCellStyle}>
+                            <input
+                              type="text"
+                              value={entry.closeTime}
+                              onChange={(e) => handleHoursFieldChange(entry.id, 'closeTime', e.target.value)}
+                              disabled={entry.closed}
+                              style={{
+                                width: '100%',
+                                padding: '0.5rem',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px'
+                              }}
+                            />
+                          </td>
+                          <td style={{ ...hoursTableCellStyle, textAlign: 'center' }}>
+                            <input
+                              type="checkbox"
+                              checked={entry.closed}
+                              onChange={(e) => handleHoursClosedToggle(entry.id, e.target.checked)}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={handleSaveHours}
+                    disabled={savingHours}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      backgroundColor: 'var(--primary-red)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: savingHours ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    {savingHours ? 'Saving...' : 'Save Hours'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={fetchHours}
+                    disabled={savingHours}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      backgroundColor: '#6c757d',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: savingHours ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    Reload
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        <section style={{ marginTop: '3rem' }}>
+          <h2 style={{ color: 'var(--primary-red)', marginBottom: '1.5rem' }}>Hero Image</h2>
+          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            {settingsMessage && (
+              <p style={{ marginBottom: '1rem', color: settingsMessage.includes('successfully') ? '#198754' : '#dc3545' }}>
+                {settingsMessage}
+              </p>
+            )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <label style={{ fontWeight: 600 }}>Hero Image URL</label>
+              <input
+                type="text"
+                value={heroImageInput}
+                onChange={(e) => setHeroImageInput(e.target.value)}
+                placeholder="https://example.com/hero.jpg or /images/BarGrill1.png"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '6px'
+                }}
+              />
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleSaveHeroImage}
+                  disabled={savingHero}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: 'var(--primary-red)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: savingHero ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {savingHero ? 'Saving...' : 'Save Hero Image'}
+                </button>
+                <button
+                  type="button"
+                  onClick={fetchSiteSettings}
+                  disabled={savingHero}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: '#6c757d',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: savingHero ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  Reload
+                </button>
+              </div>
+              <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '1.5rem 0' }} />
+              <label style={{ fontWeight: 600 }}>Upload From Your Computer</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleHeroFileChange(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
+                style={{ padding: '0.25rem 0' }}
+              />
+              <button
+                type="button"
+                onClick={handleUploadHeroImage}
+                disabled={savingHero || !heroFile}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: heroFile && !savingHero ? 'var(--primary-red)' : '#bbb',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: heroFile && !savingHero ? 'pointer' : 'not-allowed',
+                  maxWidth: '230px'
+                }}
+              >
+                {savingHero ? 'Uploading...' : 'Upload & Use Image'}
+              </button>
+              {heroFilePreview && (
+                <div>
+                  <p style={{ marginBottom: '0.5rem', fontWeight: 600 }}>Selected File Preview</p>
+                  <img src={heroFilePreview} alt="Selected hero preview" style={heroPreviewStyle} />
+                </div>
+              )}
+              {heroImageInput && (
+                <div>
+                  <p style={{ marginBottom: '0.5rem', fontWeight: 600 }}>Current Hero Preview</p>
+                  <img src={heroImageInput} alt="Hero preview" style={heroPreviewStyle} onError={(e) => ((e.target as HTMLImageElement).style.opacity = '0.3')} />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
