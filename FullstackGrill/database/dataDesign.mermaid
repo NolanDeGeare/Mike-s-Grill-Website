@@ -1,0 +1,11 @@
+classDiagram
+    class menu_items {
+        <<Entity>>
+        +BIGINT id (PK)
+        +TEXT name
+        +TEXT description
+        +DECIMAL(10,2) price
+        +TEXT image_url
+        +VARCHAR(100) category
+        +BOOLEAN featured
+    }
