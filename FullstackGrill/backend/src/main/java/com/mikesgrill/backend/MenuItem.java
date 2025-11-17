@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,13 +20,17 @@ public class MenuItem {
     private String description;
     private Double price;
     private String imageUrl;
-    private String category;
+    
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private MenuCategory category;
+    
     private boolean featured;
 
     // Constructors
     public MenuItem() {}
 
-    public MenuItem(String name, String description, Double price, String imageUrl, String category, boolean featured) {
+    public MenuItem(String name, String description, Double price, String imageUrl, MenuCategory category, boolean featured) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -74,11 +80,11 @@ public class MenuItem {
         this.imageUrl = imageUrl;
     }
 
-    public String getCategory() {
+    public MenuCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(MenuCategory category) {
         this.category = category;
     }
 

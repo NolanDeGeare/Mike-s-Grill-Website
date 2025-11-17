@@ -9,19 +9,19 @@ interface MenuItem {
   description: string;
   price: number;
   imageUrl: string;
-  category: string;
+  category: MenuCategory;
   featured: boolean;
 }
 
 const AdminMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
-  const [formData, setFormData] = useState<MenuItem>({
+  const [formData, setFormData] = useState<Omit<MenuItem, 'category'> & { categoryId: number | '' }>({
     name: '',
     description: '',
     price: 0,
     imageUrl: '',
-    category: '',
+    categoryId: '',
     featured: false
   });
   const [hours, setHours] = useState<RestaurantHours[]>([]);
@@ -58,10 +58,10 @@ const AdminMenu: React.FC = () => {
   }, [heroFilePreview]);
 
   useEffect(() => {
-    if (categories.length > 0 && !formData.category) {
-      setFormData((prev) => ({ ...prev, category: categories[0].name }));
+    if (categories.length > 0 && formData.categoryId === '') {
+      setFormData((prev) => ({ ...prev, categoryId: categories[0].id }));
     }
-  }, [categories, formData.category]);
+  }, [categories, formData.categoryId]);
 
   const fetchMenuItems = async () => {
     try {
@@ -343,17 +343,32 @@ const AdminMenu: React.FC = () => {
       const username = localStorage.getItem('adminUsername')!;
       const password = localStorage.getItem('adminPassword')!;
 
+      const category = categories.find(c => c.id === formData.categoryId);
+      if (!category) {
+        console.error('Selected category not found');
+        return;
+      }
+
+      const submissionData: Omit<MenuItem, 'id'> = {
+        name: formData.name,
+        description: formData.description,
+        price: formData.price,
+        imageUrl: formData.imageUrl,
+        featured: formData.featured,
+        category: category,
+      };
+
       if (editingItem) {
-        await axios.put(`http://localhost:8080/api/admin/menu/${editingItem.id}`, formData, {
+        await axios.put(`http://localhost:8080/api/admin/menu/${editingItem.id}`, submissionData, {
           auth: { username, password }
         });
       } else {
-        await axios.post('http://localhost:8080/api/admin/menu', formData, {
+        await axios.post('http://localhost:8080/api/admin/menu', submissionData, {
           auth: { username, password }
         });
       }
 
-      setFormData({ name: '', description: '', price: 0, imageUrl: '', category: '', featured: false });
+      setFormData({ name: '', description: '', price: 0, imageUrl: '', categoryId: '', featured: false });
       setEditingItem(null);
       fetchMenuItems();
     } catch (error) {
@@ -363,7 +378,14 @@ const AdminMenu: React.FC = () => {
 
   const handleEdit = (item: MenuItem) => {
     setEditingItem(item);
-    setFormData(item);
+    setFormData({
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      imageUrl: item.imageUrl,
+      categoryId: item.category ? item.category.id : '',
+      featured: item.featured
+    });
   };
 
   const handleDelete = async (id: number) => {
@@ -417,7 +439,7 @@ const AdminMenu: React.FC = () => {
     return (
       item.name.toLowerCase().includes(normalizedSearch) ||
       item.description.toLowerCase().includes(normalizedSearch) ||
-      item.category.toLowerCase().includes(normalizedSearch)
+      (item.category && item.category.name.toLowerCase().includes(normalizedSearch))
     );
   });
 
@@ -429,6 +451,8 @@ const AdminMenu: React.FC = () => {
         </div>
         <nav className="nav">
           <button onClick={() => navigate('/')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Home</button>
+          <button onClick={() => navigate('/admin/menu')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Menu Management</button>
+          <button onClick={() => navigate('/admin/users')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>User Management</button>
           <button onClick={handleLogout} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Logout</button>
         </nav>
       </header>
@@ -484,21 +508,18 @@ const AdminMenu: React.FC = () => {
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Category:</label>
                 <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  value={formData.categoryId}
+                  onChange={(e) => setFormData({ ...formData, categoryId: parseInt(e.target.value) })}
                   style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }}
                   required
                   disabled={categoriesLoading || categories.length === 0}
                 >
                   <option value="">{categoriesLoading ? 'Loading...' : 'Select Category'}</option>
                   {categories.map((category) => (
-                    <option key={category.id} value={category.name}>
+                    <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
                   ))}
-                  {!categories.some((cat) => cat.name === formData.category) && formData.category && (
-                    <option value={formData.category}>{formData.category}</option>
-                  )}
                 </select>
               </div>
               <div style={{ marginBottom: '1rem' }}>
@@ -532,7 +553,7 @@ const AdminMenu: React.FC = () => {
                     type="button"
                     onClick={() => {
                       setEditingItem(null);
-                      setFormData({ name: '', description: '', price: 0, imageUrl: '', category: '', featured: false });
+                      setFormData({ name: '', description: '', price: 0, imageUrl: '', categoryId: '', featured: false });
                     }}
                     style={{
                       flex: 1,
@@ -585,7 +606,7 @@ const AdminMenu: React.FC = () => {
                     <div>
                       <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--primary-red)' }}>{item.name} {item.featured && '(Featured)'}</h4>
                       <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>{item.description}</p>
-                      <p style={{ margin: '0', fontWeight: 'bold' }}>${item.price.toFixed(2)} - {item.category}</p>
+                      <p style={{ margin: '0', fontWeight: 'bold' }}>${item.price.toFixed(2)} - {item.category?.name}</p>
                     </div>
                     <div>
                       <button

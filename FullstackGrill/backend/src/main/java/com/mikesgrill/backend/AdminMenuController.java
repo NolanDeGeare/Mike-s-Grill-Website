@@ -49,9 +49,9 @@ public class AdminMenuController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<MenuItem>> getMenuItemsByCategory(@PathVariable String category) {
-        List<MenuItem> menuItems = menuItemService.getMenuItemsByCategory(category);
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<MenuItem>> getMenuItemsByCategory(@PathVariable Long id) {
+        List<MenuItem> menuItems = menuItemService.getMenuItemsByCategoryId(id);
         return ResponseEntity.ok(menuItems);
     }
 }

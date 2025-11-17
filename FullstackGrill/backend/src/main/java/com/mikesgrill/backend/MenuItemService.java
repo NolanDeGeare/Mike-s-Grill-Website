@@ -16,8 +16,8 @@ public class MenuItemService {
         return menuItemRepository.findAll();
     }
 
-    public List<MenuItem> getMenuItemsByCategory(String category) {
-        return menuItemRepository.findByCategory(category);
+    public List<MenuItem> getMenuItemsByCategoryId(Long categoryId) {
+        return menuItemRepository.findByCategoryId(categoryId);
     }
 
     public List<MenuItem> getFeaturedMenuItems() {

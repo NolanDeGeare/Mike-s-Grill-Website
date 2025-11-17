@@ -7,6 +7,6 @@ import java.util.List;
 
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
-    List<MenuItem> findByCategory(String category);
+    List<MenuItem> findByCategoryId(Long categoryId);
     List<MenuItem> findByFeatured(boolean featured);
 }

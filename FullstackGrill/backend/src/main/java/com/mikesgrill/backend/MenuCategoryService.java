@@ -48,15 +48,7 @@ public class MenuCategoryService {
             if (incoming.getSortOrder() != null) {
                 existing.setSortOrder(incoming.getSortOrder());
             }
-            MenuCategory saved = menuCategoryRepository.save(existing);
-            if (!oldName.equals(saved.getName())) {
-                List<MenuItem> linkedItems = menuItemRepository.findByCategory(oldName);
-                for (MenuItem item : linkedItems) {
-                    item.setCategory(saved.getName());
-                    menuItemRepository.save(item);
-                }
-            }
-            return saved;
+            return menuCategoryRepository.save(existing);
         });
     }
 

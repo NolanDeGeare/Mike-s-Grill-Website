@@ -23,8 +23,8 @@ public class PublicMenuController {
         return menuItemService.getFeaturedMenuItems();
     }
 
-    @GetMapping("/category/{category}")
-    public List<MenuItem> getMenuItemsByCategory(@PathVariable String category) {
-        return menuItemService.getMenuItemsByCategory(category);
+    @GetMapping("/category/{id}")
+    public List<MenuItem> getMenuItemsByCategory(@PathVariable Long id) {
+        return menuItemService.getMenuItemsByCategoryId(id);
     }
 }

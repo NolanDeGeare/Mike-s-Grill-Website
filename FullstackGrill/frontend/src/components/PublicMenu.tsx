@@ -2,23 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import MenuCarousel from './MenuCarousel';
+
+interface MenuCategory {
+  id: number;
+  name: string;
+}
+
 interface MenuItem {
   id: number;
   name: string;
   description: string;
   price: number;
   imageUrl: string;
-  category: string;
+  category: MenuCategory;
 }
 
 const PublicMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | 'All'>('All');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
     fetchMenuItems();
+    fetchCategories();
   }, []);
 
   const fetchMenuItems = async () => {
@@ -34,14 +42,22 @@ const PublicMenu: React.FC = () => {
     }
   };
 
-  const categories = ['All', ...Array.from(new Set(menuItems.map(item => item.category)))];
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/public/categories');
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const filteredItems = selectedCategory === 'All'
     ? menuItems
-    : menuItems.filter(item => item.category === selectedCategory);
+    : menuItems.filter(item => item.category && item.category.id === selectedCategory);
+
   const sortedItems = [...filteredItems].sort((a, b) => {
   
-  if (a.category === 'Drinks' && b.category === 'Drinks') {
+  if (a.category.name === 'Drinks' && b.category.name === 'Drinks') {
     
     const getBase = (name: string) => {
       if (name.toLowerCase().includes('shake')) return 'shake';
@@ -101,13 +117,20 @@ const PublicMenu: React.FC = () => {
           <div className="container">
             {/* Category Filter */}
             <div className="category-filter">
+              <button
+                key="All"
+                className={`category-btn ${selectedCategory === 'All' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('All')}
+              >
+                All
+              </button>
               {categories.map(category => (
                 <button
-                  key={category}
-                  className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(category)}
+                  key={category.id}
+                  className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(category.id)}
                 >
-                  {category}
+                  {category.name}
                 </button>
               ))}
             </div>
@@ -143,7 +166,7 @@ const PublicMenu: React.FC = () => {
                         <span className="menu-item-price">${item.price.toFixed(2)}</span>
                       </div>
                       <p className="menu-item-description">{item.description}</p>
-                      <span className="menu-item-category">{item.category}</span>
+                      <span className="menu-item-category">{item.category?.name}</span>
                     </div>
                   </div>
                 ))}

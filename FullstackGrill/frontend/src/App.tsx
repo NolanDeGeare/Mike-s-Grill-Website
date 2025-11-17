@@ -5,6 +5,7 @@ import Home from './components/Home';
 import PublicMenu from './components/PublicMenu';
 import AdminLogin from './components/AdminLogin';
 import AdminMenu from './components/AdminMenu';
+import AdminUserManagement from './components/AdminUserManagement';
 import Contact from './components/Contact';
 import Footer from './components/Footer';  
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/menu" element={<AdminMenu />} />
+          <Route path="/admin/users" element={<AdminUserManagement />} />
         </Routes>
 
         <Footer /> {}
