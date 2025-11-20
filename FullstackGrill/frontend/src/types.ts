@@ -17,3 +17,11 @@ export interface MenuCategory {
   name: string;
   sortOrder: number;
 }
+
+export interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+}

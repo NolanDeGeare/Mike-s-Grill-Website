@@ -96,6 +96,7 @@ const AdminUserManagement: React.FC = () => {
                     <button onClick={() => navigate('/')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Home</button>
                     <button onClick={() => navigate('/admin/menu')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Menu Management</button>
                     <button onClick={() => navigate('/admin/users')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>User Management</button>
+                    <button onClick={() => navigate('/admin/contacts')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Contact Messages</button>
                     <button onClick={handleLogout} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Logout</button>
                 </nav>
             </header>

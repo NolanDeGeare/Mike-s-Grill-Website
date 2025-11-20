@@ -13,10 +13,10 @@ public class ContactController {
     private ContactService contactService;
 
     @PostMapping
-    public ResponseEntity<Void> submitContact(@RequestBody ContactMessage msg) {
+    public ResponseEntity<ContactMessage> submitContact(@RequestBody ContactMessage msg) {
         try {
-            contactService.sendContactEmail(msg);
-            return ResponseEntity.ok().build();
+            ContactMessage saved = contactService.saveContactMessage(msg);
+            return ResponseEntity.status(201).body(saved);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
