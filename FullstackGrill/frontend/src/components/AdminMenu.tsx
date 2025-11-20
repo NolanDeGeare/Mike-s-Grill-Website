@@ -66,16 +66,13 @@ const AdminMenu: React.FC = () => {
   const fetchMenuItems = async () => {
     try {
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/menu', {
-        auth: { username, password }
-      });
+      const response = await axios.get('http://localhost:8080/api/admin/menu', { withCredentials: true });
       setMenuItems(response.data);
     } catch (error) {
       console.error('Error fetching menu items:', error);
@@ -88,16 +85,13 @@ const AdminMenu: React.FC = () => {
     setHoursMessage(null);
     try {
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/hours', {
-        auth: { username, password }
-      });
+      const response = await axios.get('http://localhost:8080/api/admin/hours', { withCredentials: true });
       setHours(response.data);
     } catch (error) {
       console.error('Error fetching hours of operation:', error);
@@ -110,16 +104,13 @@ const AdminMenu: React.FC = () => {
   const fetchSiteSettings = async () => {
     try {
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/settings', {
-        auth: { username, password }
-      });
+      const response = await axios.get('http://localhost:8080/api/admin/settings', { withCredentials: true });
       setSiteSettings(response.data);
       setHeroImageInput(response.data.heroImageUrl || '');
     } catch (error) {
@@ -132,16 +123,13 @@ const AdminMenu: React.FC = () => {
     try {
       setCategoriesLoading(true);
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/categories', {
-        auth: { username, password }
-      });
+      const response = await axios.get('http://localhost:8080/api/admin/categories', { withCredentials: true });
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -179,16 +167,13 @@ const AdminMenu: React.FC = () => {
       setSavingHours(true);
       setHoursMessage(null);
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
 
-      const response = await axios.put('http://localhost:8080/api/admin/hours', hours, {
-        auth: { username, password }
-      });
+      const response = await axios.put('http://localhost:8080/api/admin/hours', hours, { withCredentials: true });
       setHours(response.data);
       setHoursMessage('Hours updated successfully.');
     } catch (error) {
@@ -204,9 +189,8 @@ const AdminMenu: React.FC = () => {
       setSavingHero(true);
       setSettingsMessage(null);
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
@@ -214,7 +198,7 @@ const AdminMenu: React.FC = () => {
       const response = await axios.put(
         'http://localhost:8080/api/admin/settings/hero-image',
         { heroImageUrl: heroImageInput },
-        { auth: { username, password } }
+        { withCredentials: true }
       );
       setSiteSettings(response.data);
       setHeroImageInput(response.data.heroImageUrl || '');
@@ -248,9 +232,8 @@ const AdminMenu: React.FC = () => {
       setSavingHero(true);
       setSettingsMessage(null);
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
@@ -262,7 +245,7 @@ const AdminMenu: React.FC = () => {
         'http://localhost:8080/api/admin/settings/hero-image/upload',
         formData,
         {
-          auth: { username, password },
+          withCredentials: true,
           headers: { 'Content-Type': 'multipart/form-data' }
         }
       );
@@ -288,9 +271,8 @@ const AdminMenu: React.FC = () => {
     try {
       setCategoryMessage(null);
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
@@ -298,7 +280,7 @@ const AdminMenu: React.FC = () => {
       await axios.put(
         `http://localhost:8080/api/admin/categories/${category.id}`,
         { name: category.name, sortOrder: category.sortOrder },
-        { auth: { username, password } }
+        { withCredentials: true }
       );
       setCategoryMessage('Category updated.');
       fetchCategories();
@@ -316,9 +298,8 @@ const AdminMenu: React.FC = () => {
     try {
       setCategoryMessage(null);
       const username = localStorage.getItem('adminUsername');
-      const password = localStorage.getItem('adminPassword');
 
-      if (!username || !password) {
+      if (!username) {
         navigate('/admin/login');
         return;
       }
@@ -326,7 +307,7 @@ const AdminMenu: React.FC = () => {
       await axios.post(
         'http://localhost:8080/api/admin/categories',
         { name: newCategoryName },
-        { auth: { username, password } }
+        { withCredentials: true }
       );
       setNewCategoryName('');
       setCategoryMessage('Category added.');
@@ -341,7 +322,6 @@ const AdminMenu: React.FC = () => {
     e.preventDefault();
     try {
       const username = localStorage.getItem('adminUsername')!;
-      const password = localStorage.getItem('adminPassword')!;
 
       const category = categories.find(c => c.id === formData.categoryId);
       if (!category) {
@@ -360,11 +340,11 @@ const AdminMenu: React.FC = () => {
 
       if (editingItem) {
         await axios.put(`http://localhost:8080/api/admin/menu/${editingItem.id}`, submissionData, {
-          auth: { username, password }
+          withCredentials: true
         });
       } else {
         await axios.post('http://localhost:8080/api/admin/menu', submissionData, {
-          auth: { username, password }
+          withCredentials: true
         });
       }
 
@@ -392,10 +372,9 @@ const AdminMenu: React.FC = () => {
     if (window.confirm('Are you sure you want to delete this menu item?')) {
       try {
         const username = localStorage.getItem('adminUsername')!;
-        const password = localStorage.getItem('adminPassword')!;
 
         await axios.delete(`http://localhost:8080/api/admin/menu/${id}`, {
-          auth: { username, password }
+          withCredentials: true
         });
         fetchMenuItems();
       } catch (error) {
@@ -406,7 +385,6 @@ const AdminMenu: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('adminUsername');
-    localStorage.removeItem('adminPassword');
     navigate('/');
   };
 

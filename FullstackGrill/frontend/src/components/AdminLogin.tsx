@@ -10,22 +10,23 @@ const AdminLogin: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
-      // Test authentication by making a request to a protected endpoint
-      await axios.get('http://localhost:8080/api/admin/menu', {
-        auth: {
-          username,
-          password
-        }
+      // Use the new POST endpoint for login
+      await axios.post('http://localhost:8080/api/admin/login', {
+        username,
+        password
+      }, {
+        withCredentials: true 
       });
 
-      // Store credentials in localStorage (in production, use proper token-based auth)
+      // Store only the username, not the password
       localStorage.setItem('adminUsername', username);
-      localStorage.setItem('adminPassword', password);
-
+      
       navigate('/admin/menu');
     } catch (err) {
-      setError('Invalid credentials');
+      setError('Invalid credentials. Please try again.');
+      console.error('Login failed:', err);
     }
   };
 
