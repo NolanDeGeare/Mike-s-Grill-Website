@@ -1,222 +1,234 @@
-# Single-Service Deployment Guide for Mike's Grill
+# Mike's Grill - Deployment Guide
 
-This guide explains how to deploy the Mike's Grill application as a **single service** on Render, where the Spring Boot backend serves the React frontend as static files.
+This guide explains how the Mike's Grill application is structured and deployed as a **single service**, where the Spring Boot backend serves the React frontend as static files.
+
+---
 
 ## Architecture Overview
 
-When deployed as a single service:
-- The React app is built and its static files are placed in `backend/src/main/resources/static/`
-- Spring Boot serves these static files and handles API requests
-- React Router client-side routes are forwarded to `index.html` by the `SpaController`
-- No CORS issues since everything runs on the same origin
+This is a **monorepo** containing both frontend and backend:
 
----
-
-## 🚀 Deploy to Render (Recommended)
-
-### Prerequisites
-- GitHub repository with your code
-- A MySQL database (see Database Options below)
-- Render account (free tier available)
-
-### Step 1: Set Up Your Database
-
-You'll need a MySQL database. Options:
-
-1. **PlanetScale** (Recommended - free tier with MySQL)
-   - Go to [planetscale.com](https://planetscale.com)
-   - Create a database
-   - Get your connection string
-
-2. **Railway MySQL** (free tier available)
-   - Go to [railway.app](https://railway.app)
-   - Create a new MySQL database
-   - Copy the connection credentials
-
-3. **Your existing Filess.io database** (if still active)
-
-### Step 2: Deploy on Render
-
-1. **Go to [render.com](https://render.com)** and sign in
-
-2. **Create New Web Service**:
-   - Click **"New +"** → **"Web Service"**
-   - Connect your GitHub repository: `NolanDeGeare/Mike-s-Grill-Website`
-
-3. **Configure the service**:
-   | Setting | Value |
-   |---------|-------|
-   | **Name** | `mikesgrill` (or your choice) |
-   | **Root Directory** | `FullstackGrill` |
-   | **Runtime** | `Docker` |
-   | **Dockerfile Path** | `./Dockerfile` |
-   | **Instance Type** | `Free` |
-
-4. **Add Environment Variables** (click "Advanced" → "Add Environment Variable"):
-
-   **Required - Database:**
-   | Variable | Description | Example |
-   |----------|-------------|---------|
-   | `DATABASE_URL` | Full JDBC MySQL URL | `jdbc:mysql://host:3306/dbname?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC` |
-   | `DATABASE_USERNAME` | Database username | `your_username` |
-   | `DATABASE_PASSWORD` | Database password | `your_password` |
-
-   **Optional - Email (for contact form):**
-   | Variable | Description | Example |
-   |----------|-------------|---------|
-   | `MAIL_USERNAME` | Gmail address | `your-email@gmail.com` |
-   | `MAIL_PASSWORD` | Gmail App Password* | `xxxx xxxx xxxx xxxx` |
-   | `ADMIN_EMAIL` | Email to receive contacts | `admin@example.com` |
-
-   > *For Gmail, create an [App Password](https://support.google.com/accounts/answer/185833)
-
-5. **Click "Create Web Service"**
-
-Render will:
-- Build the React frontend
-- Package it into Spring Boot
-- Deploy the application
-- Give you a URL like `https://mikesgrill.onrender.com`
-
-### Step 3: Verify Deployment
-
-Once deployed, visit your Render URL and check:
-- ✅ Homepage loads with menu carousel
-- ✅ Menu page shows items from database  
-- ✅ Contact form works (if email configured)
-- ✅ Admin login works at `/admin/login`
-
----
-
-## Environment Variables Reference
-
-All environment variables used by the application:
-
-```properties
-# Database (REQUIRED)
-DATABASE_URL=jdbc:mysql://host:port/database?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-DATABASE_USERNAME=your_username
-DATABASE_PASSWORD=your_password
-
-# Connection Pool (optional - has defaults)
-HIKARI_MAX_POOL_SIZE=5        # Default: 5
-HIKARI_MIN_IDLE=1             # Default: 1
-
-# JPA (optional)
-JPA_SHOW_SQL=false            # Default: false
-
-# Email - for contact form (optional)
-MAIL_HOST=smtp.gmail.com      # Default: smtp.gmail.com
-MAIL_PORT=587                 # Default: 587
-MAIL_USERNAME=                # Your email
-MAIL_PASSWORD=                # App password
-MAIL_SMTP_AUTH=true           # Default: true
-MAIL_STARTTLS=true            # Default: true
-ADMIN_EMAIL=                  # Receives contact form messages
+```
+FullstackGrill/
+├── frontend/          # React TypeScript application
+├── backend/           # Spring Boot Java API
+├── database/          # SQL scripts for database setup
+├── Dockerfile         # Multi-stage build for production
+└── render-build.sh    # Local build script
 ```
 
+When deployed:
+- The React app is built and bundled into the Spring Boot JAR
+- Spring Boot serves the React static files and handles API requests
+- Everything runs on a single port (no CORS issues)
+- React Router routes are handled by `SpaController.java`
+
 ---
 
-## Local Development
+## Current Deployment (Render)
 
-For local development, you can either:
+The application is currently deployed on [Render](https://render.com) using Docker.
 
-### Option A: Run Frontend and Backend Separately (Recommended for Development)
+### Service Configuration
 
-1. **Start the backend**:
+| Setting | Value |
+|---------|-------|
+| **Root Directory** | `FullstackGrill` |
+| **Runtime** | `Docker` |
+| **Dockerfile Path** | `./Dockerfile` |
+
+### Environment Variables
+
+The following environment variables must be configured:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | ✅ Yes | JDBC MySQL connection URL |
+| `DATABASE_USERNAME` | ✅ Yes | Database username |
+| `DATABASE_PASSWORD` | ✅ Yes | Database password |
+
+Example `DATABASE_URL` format:
+```
+jdbc:mysql://hostname:port/database_name?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+```
+
+### Deployment Process
+
+When you push to the connected GitHub branch, Render automatically:
+1. Pulls the latest code
+2. Runs the Dockerfile which:
+   - Builds the React frontend (`npm run build`)
+   - Copies the build output to Spring Boot's static resources
+   - Builds the Spring Boot JAR (`mvn package`)
+   - Creates a minimal runtime image
+3. Starts the application
+
+---
+
+## Docker Build Process
+
+The `Dockerfile` uses a multi-stage build:
+
+### Stage 1: Build React Frontend
+- Uses Node.js to install dependencies and build the React app
+- Output: `frontend/build/` directory
+
+### Stage 2: Build Spring Boot Backend
+- Uses Maven to compile the Java application
+- Copies the React build into `src/main/resources/static/`
+- Output: `backend-*.jar` file
+
+### Stage 3: Runtime Image
+- Uses a minimal Java runtime image
+- Runs the JAR file on the port specified by `$PORT` environment variable
+
+---
+
+## Database Requirements
+
+The application requires a **MySQL 8.0+** database with the following tables:
+- `menu_items` - Menu items with name, description, price, category
+- `menu_categories` - Categories for organizing menu items
+- `restaurant_hours` - Hours of operation for each day
+- `site_settings` - Site configuration (hero image, etc.)
+- `admin_users` - Admin login credentials
+- `contact_messages` - Contact form submissions
+
+The database schema is created automatically by Hibernate (`spring.jpa.hibernate.ddl-auto=update`).
+
+Initial data can be loaded using `database/init.sql`.
+
+---
+
+## Moving to a Different Host
+
+To deploy on a different hosting service:
+
+### Requirements
+- Docker support (recommended) OR Java 17+ runtime
+- MySQL 8.0+ database
+- Ability to set environment variables
+
+### Option A: Docker Deployment (Recommended)
+
+1. Build the Docker image:
    ```bash
-   cd FullstackGrill/backend
-   ./mvnw spring-boot:run
+   cd FullstackGrill
+   docker build -t mikesgrill .
    ```
 
-2. **Start the frontend** (in another terminal):
+2. Run the container:
+   ```bash
+   docker run -p 8080:8080 \
+     -e DATABASE_URL="jdbc:mysql://host:port/db" \
+     -e DATABASE_USERNAME="user" \
+     -e DATABASE_PASSWORD="pass" \
+     mikesgrill
+   ```
+
+### Option B: Manual JAR Deployment
+
+1. Build the frontend:
    ```bash
    cd FullstackGrill/frontend
-   npm start
+   npm install
+   npm run build
    ```
 
-3. The frontend runs on `http://localhost:3000` and proxies API calls to the backend.
+2. Copy frontend to backend:
+   ```bash
+   cp -r build/* ../backend/src/main/resources/static/
+   ```
 
-### Option B: Build and Run as Single Service
+3. Build the JAR:
+   ```bash
+   cd ../backend
+   ./mvnw clean package -DskipTests
+   ```
 
-Use the build script:
+4. Run the JAR:
+   ```bash
+   java -jar target/backend-0.0.1-SNAPSHOT.jar \
+     --spring.datasource.url="jdbc:mysql://host:port/db" \
+     --spring.datasource.username="user" \
+     --spring.datasource.password="pass"
+   ```
+
+### Option C: Using the Build Script
+
+A convenience script is provided:
 ```bash
 cd FullstackGrill
 chmod +x render-build.sh
 ./render-build.sh
-
-# Then run:
-java -jar backend/target/backend-0.0.1-SNAPSHOT.jar
 ```
+
+This builds everything and outputs the JAR location.
 
 ---
 
-## Database Setup
+## Configuration Reference
 
-### Using PlanetScale (Recommended for Production)
+All configuration is in `backend/src/main/resources/application.properties`.
 
-1. Create account at [planetscale.com](https://planetscale.com)
-2. Create a new database
-3. Go to **Connect** → Select **Java** → Copy the connection string
-4. Use these as your Render environment variables
+Key settings that can be overridden via environment variables:
 
-### Using Your Existing Database
+| Property | Environment Variable | Default |
+|----------|---------------------|---------|
+| Database URL | `DATABASE_URL` | localhost |
+| Database User | `DATABASE_USERNAME` | user |
+| Database Password | `DATABASE_PASSWORD` | password |
+| Server Port | `PORT` | 8080 |
+| Connection Pool Size | `HIKARI_MAX_POOL` | 5 |
 
-If your Filess.io database is still active:
-```
-DATABASE_URL=jdbc:mysql://so8d22.h.filess.io:3307/MikesGrill_sincedull?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-DATABASE_USERNAME=MikesGrill_sincedull
-DATABASE_PASSWORD=<your-password>
-```
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `Dockerfile` | Production build configuration |
+| `render-build.sh` | Local build script |
+| `backend/src/main/java/.../SpaController.java` | Routes React Router paths to index.html |
+| `backend/src/main/java/.../SecurityConfig.java` | Security and CORS configuration |
+| `database/init.sql` | Initial database schema and seed data |
 
 ---
 
 ## Troubleshooting
 
-### Build fails on Render
-- Check the build logs for specific errors
-- Ensure all files are committed to GitHub
-- Verify the Dockerfile path is correct
+### Application won't start
+- Check database connection credentials
+- Verify database is accessible from the host
+- Check logs for specific error messages
 
-### API calls returning 404
-- Ensure the React build was properly included
-- Check that `index.html` exists in the static folder
+### Pages return 404 on refresh
+- Ensure `SpaController.java` includes all frontend routes
+- Verify `index.html` exists in the static resources
 
-### Database connection fails
-- Verify your `DATABASE_URL` format is correct
-- Check that your database allows external connections
-- Try the connection locally first
+### Database connection refused
+- Verify the database host allows external connections
+- Check firewall/security group settings
+- Confirm credentials are correct
 
-### SPA routes not working (refresh shows 404)
-- The `SpaController` forwards these routes to `index.html`
-- If adding new routes, update `SpaController.java`
-
-### Images not loading
-- Uploaded images are stored in `/app/uploads/` in the container
-- For persistent storage, consider using cloud storage (S3, Cloudinary)
-- Note: Render free tier has ephemeral storage - uploaded images may be lost on redeploy
+### Images not persisting after redeploy
+- Uploaded images are stored in `/app/uploads/` inside the container
+- This storage is ephemeral on most platforms
+- For persistent storage, consider using cloud storage (S3, etc.)
 
 ---
 
-## Files Created for Deployment
+## Admin Access
 
-| File | Purpose |
-|------|---------|
-| `Dockerfile` | Multi-stage build for Render |
-| `render-build.sh` | Local build script |
-| `render.yaml` | Render Blueprint (optional) |
-| `SpaController.java` | Handles React Router routes |
+The admin panel is accessible at `/admin/login`.
+
+Default credentials should be changed after initial setup. Admin users are stored in the `admin_users` table with BCrypt-hashed passwords.
 
 ---
 
-## Summary of Code Changes Made
+## Support
 
-1. **Frontend**: Changed all `http://localhost:8080/api/...` to `/api/...` (relative paths)
-2. **Backend**:
-   - `application.properties`: All sensitive values use environment variables with defaults
-   - Created `SpaController.java` to handle React Router routes
-   - Updated `SecurityConfig.java` with flexible CORS and static resource permissions
-   - Updated `WebConfig.java` to serve static files properly
-   - Removed hardcoded `@CrossOrigin` annotations from controllers
-
-These changes allow the app to work both locally and in production on Render!
+For questions about this codebase, refer to:
+- `README.md` in each directory for component-specific documentation
+- Code comments throughout the application
+- This deployment guide for infrastructure concerns
