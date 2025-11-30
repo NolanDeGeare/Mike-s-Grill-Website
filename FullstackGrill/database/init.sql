@@ -1,7 +1,6 @@
 -- MySQL-compatible seed for Mike's Grill `menu_items` table
 -- This file creates the `mikesgrill` database (if missing), the `menu_items` table
--- and inserts sample data. It's intended to be used with the project's docker-compose (which maps ./init.sql)
--- or with a local MySQL server.
+
 
 SET FOREIGN_KEY_CHECKS=0;
 

@@ -31,8 +31,14 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/admin/login").permitAll()
-                .requestMatchers("/api/public/**", "/api/menu/**", "/").permitAll()
+                .requestMatchers("/api/public/**", "/api/menu/**", "/api/contact").permitAll()
                 .requestMatchers("/api/admin/**").authenticated()
+                // Allow static resources for the React SPA
+                .requestMatchers("/", "/index.html", "/static/**", "/uploads/**", 
+                    "/favicon.ico", "/manifest.json", "/robots.txt", "/*.png", "/*.ico",
+                    "/images/**").permitAll()
+                // Allow SPA routes to be handled by React Router
+                .requestMatchers("/menu", "/contact", "/admin", "/admin/**").permitAll()
                 .anyRequest().permitAll()
             )
             .sessionManagement(session -> session
@@ -55,7 +61,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // Allow localhost for development and any deployed origin (same-origin requests don't need CORS)
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "https://*", "http://*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);

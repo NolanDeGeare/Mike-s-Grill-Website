@@ -21,7 +21,7 @@ const MenuCarousel: React.FC = () => {
   useEffect(() => {
     const fetchFeaturedItems = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/public/menu/featured');
+        const response = await axios.get('/api/public/menu/featured');
         setFeaturedItems(response.data);
       } catch (error) {
         console.error('Error fetching featured items:', error);

@@ -1,0 +1,35 @@
+# Render Blueprint for Mike's Grill
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: mikesgrill
+    runtime: docker
+    dockerfilePath: ./FullstackGrill/Dockerfile
+    dockerContext: ./FullstackGrill
+    envVars:
+      # Database Configuration (REQUIRED)
+      - key: DATABASE_URL
+        sync: false  # Must be set manually in Render dashboard
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      
+      # Email Configuration (Optional - for contact form)
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      
+      # Performance tuning
+      - key: HIKARI_MAX_POOL_SIZE
+        value: "5"
+      - key: JPA_SHOW_SQL
+        value: "false"

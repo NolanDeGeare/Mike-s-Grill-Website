@@ -13,7 +13,7 @@ const AdminLogin: React.FC = () => {
     setError('');
     try {
       // Use the new POST endpoint for login
-      await axios.post('http://localhost:8080/api/admin/login', {
+      await axios.post('/api/admin/login', {
         username,
         password
       }, {

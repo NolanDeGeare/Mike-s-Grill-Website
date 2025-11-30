@@ -7,7 +7,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/menu")
-@CrossOrigin(origins = "http://localhost:3000")
 public class PublicMenuController {
 
     @Autowired

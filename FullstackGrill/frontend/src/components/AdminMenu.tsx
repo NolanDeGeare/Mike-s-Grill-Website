@@ -72,7 +72,7 @@ const AdminMenu: React.FC = () => {
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/menu', { withCredentials: true });
+      const response = await axios.get('/api/admin/menu', { withCredentials: true });
       setMenuItems(response.data);
     } catch (error) {
       console.error('Error fetching menu items:', error);
@@ -91,7 +91,7 @@ const AdminMenu: React.FC = () => {
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/hours', { withCredentials: true });
+      const response = await axios.get('/api/admin/hours', { withCredentials: true });
       setHours(response.data);
     } catch (error) {
       console.error('Error fetching hours of operation:', error);
@@ -110,7 +110,7 @@ const AdminMenu: React.FC = () => {
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/settings', { withCredentials: true });
+      const response = await axios.get('/api/admin/settings', { withCredentials: true });
       setSiteSettings(response.data);
       setHeroImageInput(response.data.heroImageUrl || '');
     } catch (error) {
@@ -129,7 +129,7 @@ const AdminMenu: React.FC = () => {
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/api/admin/categories', { withCredentials: true });
+      const response = await axios.get('/api/admin/categories', { withCredentials: true });
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -173,7 +173,7 @@ const AdminMenu: React.FC = () => {
         return;
       }
 
-      const response = await axios.put('http://localhost:8080/api/admin/hours', hours, { withCredentials: true });
+      const response = await axios.put('/api/admin/hours', hours, { withCredentials: true });
       setHours(response.data);
       setHoursMessage('Hours updated successfully.');
     } catch (error) {
@@ -196,7 +196,7 @@ const AdminMenu: React.FC = () => {
       }
 
       const response = await axios.put(
-        'http://localhost:8080/api/admin/settings/hero-image',
+        '/api/admin/settings/hero-image',
         { heroImageUrl: heroImageInput },
         { withCredentials: true }
       );
@@ -242,7 +242,7 @@ const AdminMenu: React.FC = () => {
       formData.append('file', heroFile);
 
       const response = await axios.post(
-        'http://localhost:8080/api/admin/settings/hero-image/upload',
+        '/api/admin/settings/hero-image/upload',
         formData,
         {
           withCredentials: true,
@@ -278,7 +278,7 @@ const AdminMenu: React.FC = () => {
       }
 
       await axios.put(
-        `http://localhost:8080/api/admin/categories/${category.id}`,
+        `/api/admin/categories/${category.id}`,
         { name: category.name, sortOrder: category.sortOrder },
         { withCredentials: true }
       );
@@ -305,7 +305,7 @@ const AdminMenu: React.FC = () => {
       }
 
       await axios.post(
-        'http://localhost:8080/api/admin/categories',
+        '/api/admin/categories',
         { name: newCategoryName },
         { withCredentials: true }
       );
@@ -339,11 +339,11 @@ const AdminMenu: React.FC = () => {
       };
 
       if (editingItem) {
-        await axios.put(`http://localhost:8080/api/admin/menu/${editingItem.id}`, submissionData, {
+        await axios.put(`/api/admin/menu/${editingItem.id}`, submissionData, {
           withCredentials: true
         });
       } else {
-        await axios.post('http://localhost:8080/api/admin/menu', submissionData, {
+        await axios.post('/api/admin/menu', submissionData, {
           withCredentials: true
         });
       }
@@ -373,7 +373,7 @@ const AdminMenu: React.FC = () => {
       try {
         const username = localStorage.getItem('adminUsername')!;
 
-        await axios.delete(`http://localhost:8080/api/admin/menu/${id}`, {
+        await axios.delete(`/api/admin/menu/${id}`, {
           withCredentials: true
         });
         fetchMenuItems();

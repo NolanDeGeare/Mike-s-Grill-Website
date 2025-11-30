@@ -32,7 +32,7 @@ const PublicMenu: React.FC = () => {
   const fetchMenuItems = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8080/api/public/menu');
+      const response = await axios.get('/api/public/menu');
       setMenuItems(response.data);
       setLoading(false);
     } catch (error) {
@@ -44,7 +44,7 @@ const PublicMenu: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/public/categories');
+      const response = await axios.get('/api/public/categories');
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);

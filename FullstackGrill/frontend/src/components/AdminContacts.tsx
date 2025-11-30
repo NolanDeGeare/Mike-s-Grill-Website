@@ -28,7 +28,7 @@ const AdminContacts: React.FC = () => {
     }
 
     try {
-      const response = await axios.get('http://localhost:8080/api/admin/contacts', {
+      const response = await axios.get('/api/admin/contacts', {
         withCredentials: true
       });
       setMessages(response.data);
@@ -50,7 +50,7 @@ const AdminContacts: React.FC = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:8080/api/admin/contacts/${id}`, {
+      await axios.delete(`/api/admin/contacts/${id}`, {
         withCredentials: true
       });
       setStatus('Message deleted.');

@@ -27,7 +27,7 @@ const AdminUserManagement: React.FC = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/admin/users', {
+            const response = await axios.get('/api/admin/users', {
                 withCredentials: true
             });
             setUsers(response.data);
@@ -46,7 +46,7 @@ const AdminUserManagement: React.FC = () => {
             return;
         }
         try {
-            await axios.post('http://localhost:8080/api/admin/users', { username, password }, {
+            await axios.post('/api/admin/users', { username, password }, {
                 withCredentials: true
             });
             setUsername('');
@@ -69,7 +69,7 @@ const AdminUserManagement: React.FC = () => {
             setError('');
             setMessage('');
             try {
-                await axios.delete(`http://localhost:8080/api/admin/users/${id}`, {
+                await axios.delete(`/api/admin/users/${id}`, {
                     withCredentials: true
                 });
                 setMessage(`User '${name}' deleted successfully.`);

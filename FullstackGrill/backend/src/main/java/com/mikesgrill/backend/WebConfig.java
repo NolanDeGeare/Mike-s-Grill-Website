@@ -14,8 +14,17 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Serve uploaded files
         String uploadPath = uploadDir.toUri().toString();
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations(uploadPath);
+        
+        // Serve static files from React build (for production deployment)
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/static/");
+        
+        // Serve images from public folder
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("classpath:/static/images/");
     }
 }
