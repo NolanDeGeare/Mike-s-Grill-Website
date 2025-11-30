@@ -27,7 +27,7 @@ When deployed:
 
 ## Current Deployment (Render)
 
-The application is currently deployed on [Render](https://render.com) using Docker.
+The application is currently deployed on [Render](https://render.com) using Docker. Available at this [URL](https://mikes-grill.onrender.com)
 
 ### Service Configuration
 
