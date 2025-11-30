@@ -43,7 +43,7 @@ The following environment variables must be configured:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | ✅ Yes | JDBC MySQL connection URL |
+| `SPRING_DATA_SOURCE_URL` | ✅ Yes | JDBC MySQL connection URL |
 | `DATABASE_USERNAME` | ✅ Yes | Database username |
 | `DATABASE_PASSWORD` | ✅ Yes | Database password |
 
