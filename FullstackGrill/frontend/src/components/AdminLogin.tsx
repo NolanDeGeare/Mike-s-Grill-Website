@@ -73,7 +73,7 @@ const AdminLogin: React.FC = () => {
           </button>
         </form>
         <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}>
-          Default credentials: admin / admin123
+    
         </p>
       </div>
     </div>
